@@ -67,10 +67,20 @@ async def flush_and_send_pending(
 
 async def poll_loop() -> None:
     """Main long-polling loop. Runs until cancelled."""
+    from app.config import settings
+
+    if not settings.ilink_bot_token:
+        logger.warning(
+            "iLink poller disabled: ILINK_BOT_TOKEN is not set. "
+            "Scan the QR code at /ilink/qrcode, confirm in WeChat, "
+            "then set ILINK_BOT_TOKEN in .env and restart."
+        )
+        return
+
     buf = ""
     consecutive_errors = 0
 
-    logger.info("iLink poller started (channel_version=%s)", ilink_client.base_url)
+    logger.info("iLink poller started (base_url=%s)", ilink_client.base_url)
 
     while True:
         try:
