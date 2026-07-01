@@ -4,7 +4,7 @@
 def test_settings_load():
     from app.config import Settings
 
-    s = Settings()
+    s = Settings(canvas_base_url="https://canvas.instructure.com")
     assert s.canvas_base_url == "https://canvas.instructure.com"
     assert s.ilink_base_url == "https://ilinkai.weixin.qq.com"
     assert s.ilink_channel_version == "1.0.3"

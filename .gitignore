@@ -38,3 +38,7 @@ data/
 
 # Alembic
 alembic/versions/*.pyc
+
+# Celery
+celerybeat-schedule
+celerybeat-schedule.*
