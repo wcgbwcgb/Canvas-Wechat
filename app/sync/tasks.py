@@ -41,15 +41,13 @@ import asyncio  # noqa: E402
 
 
 def _run_async(coro) -> dict:
-    """Run an async coroutine from a sync Celery task."""
-    try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            import concurrent.futures
+    """Run an async coroutine from a sync Celery task.
 
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(asyncio.run, coro)
-                return future.result(timeout=600)
+    Celery worker tasks run in a forked process where no running event loop
+    exists on the current thread. asyncio.run() creates a fresh loop each
+    call, which is exactly what we want here — never use get_event_loop().
+    """
+    try:
         return asyncio.run(coro)
     except Exception as exc:
         logger.error("Task failed: %s", exc)
