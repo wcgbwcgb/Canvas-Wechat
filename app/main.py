@@ -10,6 +10,8 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 
+from sqlalchemy import text
+
 from fastapi import FastAPI, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 
@@ -95,10 +97,10 @@ async def status():
     try:
         from app.db.session import engine
         async with engine.connect() as conn:
-            await conn.execute("SELECT 1")
+            await conn.execute(text("SELECT 1"))
         db_ok = True
-    except Exception:
-        pass
+    except Exception as e:
+        logger.warning("DB check failed: %s", e, exc_info=True)
 
     return {
         "redis": "connected" if redis_ok else "disconnected",
